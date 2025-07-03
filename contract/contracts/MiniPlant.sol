@@ -59,6 +59,16 @@ contract MiniPlant is ERC721, Ownable {
         "#5FAD56"  // fresh green stripe
     ];
 
+    // Achievements
+    mapping(address => mapping(uint8 => bool)) public achievementUnlocked;
+    mapping(address => uint256) public userVaultedCount;
+    event AchievementUnlocked(address indexed user, uint8 indexed achievementId, uint256 tokenId);
+
+    event PlantMinted(address indexed owner, uint256 indexed tokenId);
+    event PetalGrown(address indexed owner, uint256 indexed tokenId, uint8 newPetalCount, uint8 colorIndex);
+    event PetalTrimmed(address indexed owner, uint256 indexed tokenId, uint8 newPetalCount);
+    event PlantVaulted(address indexed owner, uint256 indexed tokenId);
+
     constructor() ERC721("MiniPlant", "MPLANT") Ownable(msg.sender) {}
 
     // Mint a new plant (1 per address)
@@ -75,6 +85,7 @@ contract MiniPlant is ERC721, Ownable {
         // pseudo-random pot color index
         plant.potColorIndex = uint8(uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, tokenId))) % potColors.length);
         activePlant[msg.sender] = tokenId;
+        emit PlantMinted(msg.sender, tokenId);
     }
 
     // Pay to grow a petal (up to 8)
@@ -100,6 +111,7 @@ contract MiniPlant is ERC721, Ownable {
             ) % petalColors.length
         );
         plants[tokenId].petals++;
+        emit PetalGrown(msg.sender, tokenId, plants[tokenId].petals, plants[tokenId].petalColorIndices[petalNum]);
     }
 
 
@@ -111,6 +123,54 @@ contract MiniPlant is ERC721, Ownable {
         require(!plants[tokenId].vaulted, "Vaulted");
         require(plants[tokenId].petals > 0, "No petals left");
         plants[tokenId].petals--;
+        emit PetalTrimmed(msg.sender, tokenId, plants[tokenId].petals);
+    }
+
+    // Helper: check if all petals are unique colors
+    function _has8UniqueColors(uint256 tokenId) internal view returns (bool) {
+        Plant storage plant = plants[tokenId];
+        if (plant.petals != 8) return false;
+        bool[8] memory seen;
+        for (uint8 i = 0; i < 8; i++) {
+            uint8 idx = plant.petalColorIndices[i] % 8;
+            if (seen[idx]) return false;
+            seen[idx] = true;
+        }
+        return true;
+    }
+
+    // Helper: check if all petals are red (color 0)
+    function _isAllRed(uint256 tokenId) internal view returns (bool) {
+        Plant storage plant = plants[tokenId];
+        if (plant.petals < 3) return false;
+        for (uint8 i = 0; i < plant.petals; i++) {
+            if (plant.petalColorIndices[i] % 8 != 0) return false;
+        }
+        return true;
+    }
+
+    // Helper: check and unlock achievements
+    function _checkAndUnlockAchievements(address user, uint256 tokenId) internal {
+        // 1. 8 unique colored petals
+        if (!achievementUnlocked[user][1] && _has8UniqueColors(tokenId)) {
+            achievementUnlocked[user][1] = true;
+            emit AchievementUnlocked(user, 1, tokenId);
+        }
+        // 2. 6+ petals
+        if (!achievementUnlocked[user][2] && plants[tokenId].petals >= 6) {
+            achievementUnlocked[user][2] = true;
+            emit AchievementUnlocked(user, 2, tokenId);
+        }
+        // 3. 5+ vaulted plants
+        if (!achievementUnlocked[user][3] && userVaultedCount[user] > 5) {
+            achievementUnlocked[user][3] = true;
+            emit AchievementUnlocked(user, 3, 0);
+        }
+        // 4. all red, 3+ petals
+        if (!achievementUnlocked[user][4] && _isAllRed(tokenId)) {
+            achievementUnlocked[user][4] = true;
+            emit AchievementUnlocked(user, 4, tokenId);
+        }
     }
 
     // Vault: seal the plant forever
@@ -121,6 +181,9 @@ contract MiniPlant is ERC721, Ownable {
         require(!plants[tokenId].vaulted, "Already vaulted");
         plants[tokenId].vaulted = true;
         activePlant[msg.sender] = 0;
+        userVaultedCount[msg.sender]++;
+        emit PlantVaulted(msg.sender, tokenId);
+        _checkAndUnlockAchievements(msg.sender, tokenId);
     }
 
     // On-chain SVG rendering
