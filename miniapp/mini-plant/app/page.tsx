@@ -24,6 +24,8 @@ import { Icon } from "./components/DemoComponents";
 import { Home } from "./components/DemoComponents";
 import { Features } from "./components/DemoComponents";
 import FlowerRenderer from "./components/flower";
+import Leaderboard from "./components/leaderboard";
+import Vault from "./components/vault";
 
 export default function App() {
   const { setFrameReady, isFrameReady, context } = useMiniKit();
@@ -135,8 +137,8 @@ export default function App() {
         {/* Tab Content */}
         <main className="flex-1">
           {activeTab === "garden" && <FlowerRenderer />}
-          {activeTab === "vault" && <div className="text-center text-[var(--app-foreground-muted)]">Vault coming soon...</div>}
-          {activeTab === "leaderboard" && <div className="text-center text-[var(--app-foreground-muted)]">Leaderboard coming soon...</div>}
+          {activeTab === "vault" && <Vault />}
+          {activeTab === "leaderboard" && <Leaderboard />}
         </main>
 
         <footer className="mt-2 pt-4 flex justify-center">

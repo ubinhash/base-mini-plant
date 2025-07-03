@@ -4,6 +4,9 @@ import { NFTCard } from '@coinbase/onchainkit/nft';
 import RenderFlower from './renderflower';
 import { ethers } from 'ethers';
 import { useAccount } from "wagmi";
+import { useCallback } from 'react';
+import type { LifecycleStatus } from '@coinbase/onchainkit/transaction'; 
+
 import {
   Transaction,
   TransactionButton,
@@ -123,6 +126,10 @@ export default function FlowerRenderer() {
     setCurrentFlowerId(null);
   }
 
+  const handleOnStatus = useCallback((status: LifecycleStatus) => {  
+    console.log('Transaction status:', status); 
+  }, []); 
+
   return (
     <div style={{ textAlign: 'center' }}>
       {/* <div 
@@ -198,12 +205,9 @@ export default function FlowerRenderer() {
               onError={(e) => {
                 setErrorText(e.message || String(e));
               }}
+              onStatus={handleOnStatus}
             >
               <TransactionButton className="text-white text-md" text="Grow"/>
-              <TransactionStatus>
-                <TransactionStatusAction />
-                <TransactionStatusLabel />
-              </TransactionStatus>
               <TransactionToast>
                 <TransactionToastIcon />
                 <TransactionToastLabel />
