@@ -11,8 +11,8 @@ A fully on-chain flower growing dApp built on Base with MiniKit and OnchainKit i
 
 ### Core Gameplay
 - **Mint Flowers**: Start your garden by minting a new flower NFT
-- **Grow Petals**: Add petals to your flower (up to 8) with unique colors
-- **Trim Petals**: Remove petals to reshape your flower
+- **Grow Petals**: Add petals to your flower (up to 8) with random colors
+- **Trim Petals**: Remove petals to reshape your flower (LIFO)
 - **Vault Flowers**: Seal your completed flowers in the vault
 
 ### Achievement System
@@ -22,17 +22,17 @@ A fully on-chain flower growing dApp built on Base with MiniKit and OnchainKit i
 - 🌹 **ALL RED**: Grow all red petals (3+ petals)
 
 ### Technical Features
-- **Fully On-Chain**: All flower data and rendering stored on-chain
-- **Soulbound NFTs**: Non-transferable flowers for true ownership
-- **Deterministic Rendering**: SVG flowers generated from on-chain data
+- **Fully On-Chain**: Flowers are fully on-chain svg, stored and rendered in contract.
+- **Soulbound NFTs**: Non-transferable flowers 
+- **Base Mini App** Created with mini kit with on-chain kit integration
 - **Real-time Updates**: Live data from The Graph for leaderboards and achievements
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: Next.js 15, TypeScript, React
-- **Blockchain**: Base Network
+- **Blockchain**: Base Mainnet
 - **Smart Contracts**: Solidity (MiniPlant.sol)
-- **UI Framework**: MiniKit + OnchainKit
+- **Base Tech Used**: MiniKit + OnchainKit
 - **Data Indexing**: The Graph
 - **Styling**: Tailwind CSS
 
@@ -90,7 +90,6 @@ This project leverages **MiniKit** for seamless mobile wallet integration:
 
 - **Frame Integration**: Built as a Farcaster Frame for social discovery
 - **Mobile Optimized**: Native mobile experience with wallet connections
-- **Sponsored Transactions**: Gasless transactions for better UX
 - **Account Association**: Users can add the frame to their Farcaster account
 
 ## 🔗 OnchainKit Integration
@@ -180,8 +179,8 @@ This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- **Base Network** for the L2 infrastructure
-- **MiniKit** for mobile wallet integration
+- **Base Network** the chain that the app lives on
+- **MiniKit** for miniapp integration (frontend created with `npx create-onchain --mini`)
 - **OnchainKit** for transaction components
 - **The Graph** for data indexing
 - **Farcaster** for social discovery
