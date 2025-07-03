@@ -28,7 +28,7 @@ import FlowerRenderer from "./components/flower";
 export default function App() {
   const { setFrameReady, isFrameReady, context } = useMiniKit();
   const [frameAdded, setFrameAdded] = useState(false);
-  const [activeTab, setActiveTab] = useState("home");
+  const [activeTab, setActiveTab] = useState("garden");
 
   const addFrame = useAddFrame();
   const openUrl = useOpenUrl();
@@ -96,12 +96,48 @@ export default function App() {
           <div>{saveFrameButton}</div>
         </header>
 
-        <main className="flex-1">
-          {activeTab === "home" && <Home setActiveTab={setActiveTab} />}
-          {activeTab === "features" && <Features setActiveTab={setActiveTab} />}
-        </main>
+        {/* Tabs */}
+        <div className="flex justify-center mb-4">
+          <div className="flex space-x-1 bg-[var(--app-card-bg)] rounded-lg p-1">
+            <button
+              onClick={() => setActiveTab("garden")}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === "garden"
+                  ? "bg-[var(--app-accent)] text-[var(--app-background)]"
+                  : "text-[var(--app-foreground-muted)] hover:text-[var(--app-foreground)]"
+              }`}
+            >
+              Garden
+            </button>
+            <button
+              onClick={() => setActiveTab("vault")}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === "vault"
+                  ? "bg-[var(--app-accent)] text-[var(--app-background)]"
+                  : "text-[var(--app-foreground-muted)] hover:text-[var(--app-foreground)]"
+              }`}
+            >
+              Vault
+            </button>
+            <button
+              onClick={() => setActiveTab("leaderboard")}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === "leaderboard"
+                  ? "bg-[var(--app-accent)] text-[var(--app-background)]"
+                  : "text-[var(--app-foreground-muted)] hover:text-[var(--app-foreground)]"
+              }`}
+            >
+              Leaderboard
+            </button>
+          </div>
+        </div>
 
-        <FlowerRenderer />
+        {/* Tab Content */}
+        <main className="flex-1">
+          {activeTab === "garden" && <FlowerRenderer />}
+          {activeTab === "vault" && <div className="text-center text-[var(--app-foreground-muted)]">Vault coming soon...</div>}
+          {activeTab === "leaderboard" && <div className="text-center text-[var(--app-foreground-muted)]">Leaderboard coming soon...</div>}
+        </main>
 
         <footer className="mt-2 pt-4 flex justify-center">
           <Button

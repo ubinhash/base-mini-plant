@@ -53,7 +53,7 @@ export function generateFlowerSVG(petalCount = 0) {
   }
 
   // Center (flower core) - smaller circle, moved higher
-  const center = `<circle cx="150" cy="130" r="5" fill="#333"   stroke="#fff" stroke-width="2"/>`;
+  const center = `<circle cx="150" cy="130" r="7" fill="#333"   stroke="#fff" stroke-width="2"/>`;
 
   // Leaves (2 static) - moved upward and enlarged, with adjusted positions
   const leaves = `
@@ -67,14 +67,17 @@ export function generateFlowerSVG(petalCount = 0) {
           stroke="#2E7D32" stroke-width="4" fill="none" />
   `;
 
-  // Minimalistic pot below the plant, touching the stem, with more stripes
+  // Use the first palette as default
+  const [potBodyColor, potStripeColor] = potColorPalettes[7];
+
+  // Minimalistic pot below the plant, using palette colors
   const pot = `
     <g>
       <!-- Pot body: semicircle with flat top -->
-      <path d="M 100 225 Q 150 285 200 225 Q 200 255 150 270 Q 100 255 100 225 Z" fill="#F9F9E3" stroke="none"/>
-      <rect x="100" y="225" width="100" height="12" fill="#F9F9E3" stroke="none"/>
+      <path d="M 100 225 Q 150 285 200 225 Q 200 255 150 270 Q 100 255 100 225 Z" fill="${potBodyColor}" stroke="none"/>
+      <rect x="100" y="225" width="100" height="12" fill="${potBodyColor}" stroke="none"/>
       <!-- Pot stripes -->
-      <g stroke="#BFCF6A" stroke-width="2" fill="none">
+      <g stroke="${potStripeColor}" stroke-width="2" fill="none">
         <path d="M 105 235 Q 150 245 195 235" />
         <path d="M 105 240 Q 150 250 195 240" />
         <path d="M 105 245 Q 150 255 195 245" />
@@ -97,4 +100,18 @@ export function generateFlowerSVG(petalCount = 0) {
     </svg>
   `;
 }
+
+// Pot color palettes: 4x4 options for striped and solid pots
+export const potColorPalettes = [
+  // Each entry: [body, stripe]
+  ["#F9F9E3", "#BFCF6A"], // light cream + olive stripe
+  ["#FFE5B4", "#FFB347"], // pastel orange + vivid peach stripe
+  ["#E0BBE4", "#957DAD"], // lavender + muted purple stripe
+  ["#B5EAD7", "#70C1B3"], // mint + teal stripe
+  ["#FFF1BA", "#FFD166"], // pastel yellow + golden stripe
+  ["#B5D8FA", "#6A94FF"], // pastel blue + periwinkle stripe
+  ["#FFD1DC", "#FF6B6B"], // pastel pink + coral stripe
+  ["#E2F0CB", "#5FAD56"], // pastel green + fresh green stripe
+
+];
   

@@ -1,0 +1,8 @@
+{
+  "base": {
+    "MiniPlant": {
+      "address": "0x73f6d23fd7d0fbcf236febf72c72939eb9750e20",
+      "startBlock": 32360289
+    }
+  }
+}
