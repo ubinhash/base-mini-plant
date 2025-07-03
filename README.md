@@ -2,6 +2,11 @@
 
 A fully on-chain flower growing dApp built on Base with MiniKit and OnchainKit integration. Grow, nurture, and vault your unique NFT flowers with interactive on-chain actions.
 
+## 🚀 Live Deployment
+
+- **🌐 App**: [https://mini-plant.vercel.app/](https://mini-plant.vercel.app/)
+- **📄 Contract**: [0x73f6d23fd7d0fbcf236febf72c72939eb9750e20](https://basescan.org/address/0x73f6d23fd7d0fbcf236febf72c72939eb9750e20)
+
 ## 🌟 Features
 
 ### Core Gameplay
