@@ -38,16 +38,18 @@ const contractAddress = process.env.NEXT_PUBLIC_FLOWER_CONTRACT_ADDRESS as `0x${
 
 export default function FlowerRenderer() {
   const { address } = useAccount();
+  
   const [petalCount, setPetalCount] = useState(0);
   const [currentFlowerId, setCurrentFlowerId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorText, setErrorText] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [buttonKey, setButtonKey] = useState(0);
 
   useEffect(() => {
     async function fetchActivePlant() {
       if (!address || !process.env.NEXT_PUBLIC_FLOWER_CONTRACT_ADDRESS) return;
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_ALCHEMY_URL);
       const contract = new ethers.Contract(
         process.env.NEXT_PUBLIC_FLOWER_CONTRACT_ADDRESS,
         ERC721_ABI,
@@ -65,7 +67,7 @@ export default function FlowerRenderer() {
 
   const refreshFlower = async () => {
     if (!address || !process.env.NEXT_PUBLIC_FLOWER_CONTRACT_ADDRESS) return;
-    const provider = new ethers.BrowserProvider(window.ethereum);
+    const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_ALCHEMY_URL);
     const contract = new ethers.Contract(
       process.env.NEXT_PUBLIC_FLOWER_CONTRACT_ADDRESS,
       ERC721_ABI,
@@ -92,7 +94,7 @@ export default function FlowerRenderer() {
     console.log(`Mint successful: ${transactionHash}`);
     // Refresh the active plant
     if (address) {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_ALCHEMY_URL);
       const contract = new ethers.Contract(
         process.env.NEXT_PUBLIC_FLOWER_CONTRACT_ADDRESS!,
         ERC721_ABI,
@@ -105,17 +107,22 @@ export default function FlowerRenderer() {
     }
   }
 
-  async function handleGrow(response: TransactionResponse) {
+  const handleGrow = async (response: TransactionResponse) => {
     console.log("handleGrow");
     setErrorText(null);
     const transactionHash = response.transactionReceipts[0].transactionHash;
     console.log(`Grow successful: ${transactionHash}`);
-  }
+    setTimeout(() => {
+      refreshFlower();
+    }, 1000);
+    setButtonKey(prev => prev + 1); // Force re-render
+  };
 
   async function handleTrim(response: TransactionResponse) {
     setErrorText(null);
     const transactionHash = response.transactionReceipts[0].transactionHash;
     console.log(`Trim successful: ${transactionHash}`);
+    setButtonKey(prev => prev + 1);
   }
 
   async function handleVault(response: TransactionResponse) {
@@ -124,6 +131,7 @@ export default function FlowerRenderer() {
     console.log(`Vault successful: ${transactionHash}`);
     // Clear active plant after vaulting
     setCurrentFlowerId(null);
+    setButtonKey(prev => prev + 1);
   }
 
   const handleOnStatus = useCallback((status: LifecycleStatus) => {  
@@ -144,6 +152,7 @@ export default function FlowerRenderer() {
           <button onClick={addPetal} disabled={petalCount >= 8}>
         Add Petal
       </button> */}
+
       {address && currentFlowerId && (
         <div>
           <RenderFlower 
@@ -152,7 +161,7 @@ export default function FlowerRenderer() {
             tokenId={currentFlowerId} 
             refreshKey={refreshKey}
           />
-          <button 
+           <button 
             onClick={refreshFlower}
             style={{ 
               marginTop: '8px', 
@@ -166,8 +175,10 @@ export default function FlowerRenderer() {
           >
             Refresh Flower
           </button>
+       
         </div>
       )}
+        
      
       <div style={{ display: 'flex', justifyContent: 'center', gap: 12, margin: '16px 0' }}>
         {!currentFlowerId && (
@@ -199,6 +210,7 @@ export default function FlowerRenderer() {
         {currentFlowerId && (
           <>
             <Transaction
+              key={buttonKey}
               calls={[
                 {
                   to: contractAddress,
@@ -220,6 +232,7 @@ export default function FlowerRenderer() {
               </TransactionToast>
             </Transaction>
             <Transaction
+              key={buttonKey + 1}
               calls={[
                 {
                   to: contractAddress,
@@ -239,6 +252,7 @@ export default function FlowerRenderer() {
               </TransactionToast>
             </Transaction>
             <Transaction
+              key={buttonKey + 2}
               calls={[
                 {
                   to: contractAddress,
@@ -261,6 +275,8 @@ export default function FlowerRenderer() {
         )}
       </div>
       {errorText && <div style={{ color: 'red' }}>{errorText}</div>}
+      {currentFlowerId && <div>Flower ID: {currentFlowerId}</div>}
+      {/* {address && <div>Address: {address}</div>} */}
    
     </div>
   );

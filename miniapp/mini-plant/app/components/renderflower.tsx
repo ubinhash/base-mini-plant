@@ -24,11 +24,7 @@ const RenderFlower: React.FC<RenderFlowerProps> = ({ contractAddress, tokenId, r
   useEffect(() => {
     async function fetchSVG() {
       try {
-        if (!window.ethereum) {
-          setError('No Ethereum provider found');
-          return;
-        }
-        const provider = new ethers.BrowserProvider(window.ethereum);
+        const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_ALCHEMY_URL);
         const contract = new ethers.Contract(contractAddress, ERC721_ABI, provider);
         const uri: string = await contract.tokenURI(tokenId);
         if (!uri.startsWith('data:application/json;base64,')) {
@@ -58,3 +54,4 @@ const RenderFlower: React.FC<RenderFlowerProps> = ({ contractAddress, tokenId, r
 };
 
 export default RenderFlower;
+
