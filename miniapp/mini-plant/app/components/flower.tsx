@@ -132,6 +132,11 @@ export default function FlowerRenderer() {
 
   return (
     <div style={{ textAlign: 'center' }}>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-[var(--app-foreground)] mb-2">Base Mini Plant</h1>
+        <p className="text-[var(--app-foreground-muted)]">Grow your fully-onchain plant</p>
+      </div>
+      
       {/* <div 
         key={petalCount} 
         dangerouslySetInnerHTML={{ __html: generateFlowerSVG(petalCount) }} 
